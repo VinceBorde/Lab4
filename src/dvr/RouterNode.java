@@ -1,6 +1,6 @@
 package dvr;
 
-import javax.swing.*;        
+import javax.swing.*;
 
 public class RouterNode {
   private int myID;
@@ -22,14 +22,14 @@ public class RouterNode {
   public void recvUpdate(RouterPacket pkt) {
 
   }
-  
+
 
   //--------------------------------------------------
   private void sendUpdate(RouterPacket pkt) {
     sim.toLayer2(pkt);
 
   }
-  
+
 
   //--------------------------------------------------
   public void printDistanceTable() {

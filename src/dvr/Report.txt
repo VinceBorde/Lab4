@@ -1,0 +1,23 @@
+Within a specific routing table, each row is a distance vector—specifically,
+each node’s routing table includes its own distance vector and that of each of
+its neighbors.
+
+The process of receiving updated distance vectors from neighbors, recomputing
+routing table entries, and informing neighbors of changed costs of the least-cost path
+to a destination continues until no update messages are sent. At this point, since no
+update messages are sent, no further routing table calculations will occur and the
+algorithm will enter a quiescent state; that is, all nodes will be performing the wait
+in Lines 10–11 of the DV algorithm. The algorithm remains in the quiescent state
+until a link cost changes.
+
+Each node x maintains the following routing information:
+Node x’s distance vector, that is, Dx = [Dx(y): y in N], containing x’s estimate
+of its cost to all destinations, y, in N
+For each neighbor v, the cost c(x,v) from x to directly attached neighbor, v
+The distance vectors of each of its neighbors, that is, Dv = [Dv(y): y in N]
+for each neighbor v of x
+
+When a node x receives a new distance vector from any of its neighbors v, it
+saves v’s distance vector, and then uses the Bellman-Ford equation to update
+its own distance vector as follows:
+Dx(y)  minv{c(x,v) + Dv(y)} for each node y in N
