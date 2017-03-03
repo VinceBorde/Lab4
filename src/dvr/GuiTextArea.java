@@ -1,5 +1,3 @@
-package dvr;
-
 import javax.swing.*;        
 
 public class GuiTextArea {

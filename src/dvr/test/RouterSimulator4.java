@@ -1,8 +1,4 @@
-package dvr.test;
-
 import java.util.Random;
-
-import dvr.*;
 
 /* ******************************************************************
 Project 4: implementing distributed, asynchronous, distance vector routing.

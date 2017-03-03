@@ -1,4 +1,3 @@
-package dvr;
 
 public class RouterPacket implements Cloneable {
   int sourceid;       /* id of sending router sending this pkt */
