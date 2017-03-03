@@ -117,6 +117,13 @@ public class RouterNode {
 			myGUI.print( String.format( "%8s", nbNode ) );
 		}
 
+
+  //--------------------------------------------------
+  private void sendUpdate(RouterPacket pkt) {
+    sim.toLayer2(pkt);
+
+  }
+
 		myGUI.println("\n--------------------------------------------------------");
 	
 		for(int col = 0; col < RouterSimulator.NUM_NODES; col++)
