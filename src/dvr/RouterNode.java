@@ -19,6 +19,7 @@ public class RouterNode {
 	
 	    System.arraycopy(costs, 0, this.costs, 0, RouterSimulator.NUM_NODES);
 	
+	    // Loop for initialize the distance table of the node
 	    for(int i = 0; i < RouterSimulator.NUM_NODES; i++) 
 		{
 	        routes[i] = i; 
@@ -37,6 +38,10 @@ public class RouterNode {
 	    vector();
 	}
 	  
+	/**
+	 * Send the new distance vector table to the direct neighbour
+	 * Apply the poison reverse if the variable poisonedReverse is true
+	 */
 	private void vector()
 	{
 	    for(int nbNode = 0; nbNode < RouterSimulator.NUM_NODES; nbNode++) 
@@ -47,23 +52,31 @@ public class RouterNode {
 				{
 	                int[] c = new int[RouterSimulator.NUM_NODES];
 	                System.arraycopy(costs, 0, c, 0, RouterSimulator.NUM_NODES);
+	                
+	                //If the variable poisonedReverse is true, apply the poison reverse algorithm
 	                if(poisonedReverse) 
 					{
-	                	for(int j = 0; j < RouterSimulator.NUM_NODES; j++) 
+	                	for(int dest = 0; dest < RouterSimulator.NUM_NODES; dest++) 
 						{
-	                		if(routes[j] == nbNode) 
+	                		if(routes[dest] == nbNode) 
 							{
-	                			c[j] = RouterSimulator.INFINITY;
+	                			c[dest] = RouterSimulator.INFINITY;
 	                		}
 	                	}
 	                }
+	                
 	                RouterPacket pkt = new RouterPacket(myID, nbNode, c);
 	                sendUpdate(pkt);
 	            }
 	        }
 	    }
 	}
-	  
+	 
+	
+	/**
+	 * Recompute the cost of the least-cost path after receiving an update with the Bellman-Ford method
+	 * @return true if the least-cost path has changed, else false
+	 */
 	private boolean recomputeCost() 
 	{
 	    int newCost = 0;  
@@ -98,42 +111,38 @@ public class RouterNode {
 	    	vector();
 	    }
 	}
-	  
 	
 	//--------------------------------------------------
 	private void sendUpdate(RouterPacket pkt) {
 		sim.toLayer2(pkt);
 	}
-	  
 	
 	//--------------------------------------------------
 	public void printDistanceTable() {
 		myGUI.println("Current table for "+ myID +"  at time " + sim.getClocktime());		
 		
+		//Display the distance table
 		myGUI.println("Distancetable:");
+		
+		//Display each number of node
 		myGUI.print(String.format( "%8s %2s", "Dst", "|"));
 		for(int nbNode = 0; nbNode < RouterSimulator.NUM_NODES; nbNode++)
 		{
 			myGUI.print( String.format( "%8s", nbNode ) );
 		}
 
-
-  //--------------------------------------------------
-  private void sendUpdate(RouterPacket pkt) {
-    sim.toLayer2(pkt);
-
-  }
-
-		myGUI.println("\n--------------------------------------------------------");
+		myGUI.println();
+		myGUI.println("-----------------------------------------------------");
 	
-		for(int col = 0; col < RouterSimulator.NUM_NODES; col++)
+		//Display the content of the distance table
+		for(int row = 0; row < RouterSimulator.NUM_NODES; row++)
 		{
-			if(costs[col] != RouterSimulator.INFINITY &&  col != myID)
+			if(costs[row] != RouterSimulator.INFINITY &&  row != myID)
 			{
-				myGUI.print( String.format( "%2s %2s %3s", "nbr" , col, "|" ) );
-				for(int row = 0; row < RouterSimulator.NUM_NODES; row++)
+				myGUI.print( String.format( "%2s %2s %3s", "nbr" , row, "|" ) );
+				for(int col = 0; col < RouterSimulator.NUM_NODES; col++)
 				{
-					myGUI.print( String.format( "%8s", this.distanceTable[col][row] ) );
+					myGUI.print( String.format( "%8s", this.distanceTable[row][col] ) );
 				}
 				myGUI.println();
 			}
@@ -141,35 +150,41 @@ public class RouterNode {
 		myGUI.println();	
 		
 
-		myGUI.println("Our distance vector and routes:");
-		myGUI.println();
+		//Display the distance vector and routes of the actual node
+		myGUI.println("Our distance vector and routes:\n");
 
+		//Display each number of node
 		myGUI.print(String.format( "%8s %2s", "Dst", "|"));
 		for(int nbNode = 0; nbNode < RouterSimulator.NUM_NODES; nbNode++)
 		{
 			myGUI.print( String.format( "%8s", nbNode ) );
 		}
 		
-		myGUI.println("\n--------------------------------------------------------");
+		myGUI.println();
+		myGUI.println("-----------------------------------------------------");
 	
+		//Display the direct cost to go to the node
 		myGUI.print( String.format( "%8s %2s", "Cost", "|" ) );
 		for(int row = 0; row < RouterSimulator.NUM_NODES; row++)
 		{
 			myGUI.print( String.format( "%8s", this.distanceTable[myID][row] ) );
 		}
 		myGUI.println();
+		
+		//Display the leat-cost to go to the node
 		myGUI.print( String.format( "%8s %2s", "Short", "|" ) );
 		for(int row = 0; row < RouterSimulator.NUM_NODES; row++)
 		{
 			myGUI.print( String.format( "%8s", this.costs[row] ) );
 		}
 		myGUI.println();
+		
+		//Display the number of the next node to go to (least-cost path)
 		myGUI.print( String.format( "%7s %2s", "Route", "|" ) );
 		for(int row = 0; row < RouterSimulator.NUM_NODES; row++)
 		{
 			myGUI.print( String.format( "%8s", this.routes[row] ) );
 		}
-		myGUI.println();
 		myGUI.println();
 	}
 	
